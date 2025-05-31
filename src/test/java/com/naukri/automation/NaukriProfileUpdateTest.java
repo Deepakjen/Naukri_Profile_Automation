@@ -53,17 +53,20 @@ public class NaukriProfileUpdateTest {
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         );
 
-        // Continue with login
+        // Get credentials from environment variables
+        String email = System.getenv("NAUKRI_EMAIL");
+        String password = System.getenv("NAUKRI_PASSWORD");
+
         WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(By.id("login_Layer")));
         loginLayer.click();
 
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
-        emailField.sendKeys("deepakjena903@gmail.com");
+        emailField.sendKeys(email);
 
         WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='password']")));
-        passwordField.sendKeys("Deepak@123");
+        passwordField.sendKeys(password);
 
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[contains(@class, 'loginButton')]")));
