@@ -57,8 +57,10 @@ public class NaukriProfileUpdateTest {
         String email = System.getenv("NAUKRI_EMAIL");
         String password = System.getenv("NAUKRI_PASSWORD");
 
-        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(By.id("login_Layer")));
+        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
+        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")));
         loginLayer.click();
+
 
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
