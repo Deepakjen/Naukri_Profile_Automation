@@ -2,7 +2,7 @@ nname: CI
 
 on:
   schedule:
-    - cron: '10 10 * * *' # ← update this to your desired test time (in UTC)
+    - cron: '53 15 * * *' # ← update this to your desired test time (in UTC)
   push:
     branches: [ "master" ]
   pull_request:
