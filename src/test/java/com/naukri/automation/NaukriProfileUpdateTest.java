@@ -63,10 +63,12 @@ public class NaukriProfileUpdateTest {
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
         emailField.sendKeys(email);
+        System.out.println("EMAIL VALUE: " + email);
 
         WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='password']")));
         passwordField.sendKeys(password);
+        System.out.println("PASSWORD VALUE: " + password);
 
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[contains(@class, 'loginButton')]")));
