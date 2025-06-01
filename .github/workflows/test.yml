@@ -2,7 +2,7 @@ name: Run Naukri Resume Test Daily
 
 on:
   schedule:
-    - cron: '45 9 * * *' # 9:25 AM IST = 3:55 AM UTC
+    - cron: '53 15 * * *' # 9:25 AM IST = 3:55 AM UTC
   workflow_dispatch:
   push:
     branches:
