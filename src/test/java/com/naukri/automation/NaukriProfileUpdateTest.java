@@ -14,44 +14,43 @@ public class NaukriProfileUpdateTest {
     WebDriver driver;
 
     @BeforeClass
-    public void setup() {
-        try {
-            WebDriverManager.chromedriver().setup();
-            driver = new ChromeDriver();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            driver.manage().window().maximize();
-            driver.get("https://www.naukri.com/mnjuser/profile");
+public void setup() {
+    try {
+        WebDriverManager.chromedriver().setup();
 
-            // Fetch credentials from GitHub Secrets
-            String email = System.getenv("NAUKRI_EMAIL");
-            String password = System.getenv("NAUKRI_PASSWORD");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-notifications");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--user-data-dir=/tmp/unique-profile-" + System.currentTimeMillis());
 
-            if (email == null || email.isEmpty()) {
-                throw new IllegalArgumentException("Environment variable 'NAUKRI_EMAIL' is not set or empty.");
-            }
-            if (password == null || password.isEmpty()) {
-                throw new IllegalArgumentException("Environment variable 'NAUKRI_PASSWORD' is not set or empty.");
-            }
+        driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        driver.get("https://www.naukri.com/mnjuser/profile");
 
-            // Login logic
-            WebElement emailField = driver.findElement(By.id("usernameField")); // Adjust this ID as per actual page
-            emailField.sendKeys(email);
+        // Read credentials from environment
+        String email = System.getenv("NAUKRI_EMAIL");
+        String password = System.getenv("NAUKRI_PASSWORD");
 
-            WebElement continueBtn = driver.findElement(By.xpath("//button[@type='submit']"));
-            continueBtn.click();
-
-            WebElement passwordField = driver.findElement(By.id("passwordField")); // Adjust this ID as per actual page
-            passwordField.sendKeys(password);
-
-            WebElement loginBtn = driver.findElement(By.xpath("//button[@type='submit']"));
-            loginBtn.click();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail("Setup failed: " + e.getMessage());
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("NAUKRI_EMAIL is not set.");
         }
-    }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("NAUKRI_PASSWORD is not set.");
+        }
 
+        // ... rest of your login code
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        Assert.fail("Setup failed: " + e.getMessage());
+    }
+}
     @Test(priority = 1)
     public void verifyProfilePageLoaded() {
         try {
