@@ -43,23 +43,30 @@ public class NaukriProfileUpdateTest {
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
 
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+         driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         driver.manage().window().maximize();
         driver.get("https://www.naukri.com/");
 
-        // Optional: remove navigator.webdriver flag via JS
-        ((JavascriptExecutor) driver).executeScript(
-                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        );
+        // Wait until page is loaded
+        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                .executeScript("return document.readyState").equals("complete"));
 
-        // Get credentials from environment variables
+        ((JavascriptExecutor) driver).executeScript(
+                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+
         String email = System.getenv("NAUKRI_EMAIL");
         String password = System.getenv("NAUKRI_PASSWORD");
 
-        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
-        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")));
-        loginLayer.click();
+        try {
+            WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")));
+            loginLayer.click();
+        } catch (TimeoutException e) {
+            takeScreenshot("login_button_not_found.png");
+            throw e;
+        }
+
 
 
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
