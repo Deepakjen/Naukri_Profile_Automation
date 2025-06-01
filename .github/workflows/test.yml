@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master  # Changed from 'main' to 'master'
+      - master
 
 jobs:
   build:
@@ -30,6 +30,10 @@ jobs:
       env:
         NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
         NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+
+    - name: Create dummy test-output folder if missing
+      if: failure()
+      run: mkdir -p test-output
 
     - name: Archive test results
       if: failure()
