@@ -1,8 +1,8 @@
-name: Run Naukri Resume Test Daily
+nname: Run Naukri Resume Test Daily
 
 on:
   schedule:
-    - cron: '53 15 * * *' # 9:25 AM IST = 3:55 AM UTC
+    - cron: '55 3 * * *' # Runs daily at 9:25 AM IST (3:55 AM UTC)
   workflow_dispatch:
   push:
     branches:
@@ -22,21 +22,23 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Set up Chrome for Selenium
+      uses: browser-actions/setup-chrome@v4
+
     - name: Build with Maven
       run: mvn clean install
 
     - name: Run tests
-      run: mvn test
-      env:
-        NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
-        NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+      run: |
+        echo "Running Naukri Resume Update Automation..."
+        mvn test
 
     - name: Create dummy test-output folder if missing
       if: failure()
       run: mkdir -p test-output
 
     - name: Archive test results
-      if: failure()
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: test-results
