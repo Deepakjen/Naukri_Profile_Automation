@@ -31,7 +31,7 @@ public void setup() {
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
-        driver.get("https://www.naukri.com/mnjuser/profile");
+        driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
 
         // Read credentials from environment
         String email = System.getenv("NAUKRI_EMAIL");
@@ -75,7 +75,6 @@ public void setup() {
             WebElement saveButton = driver.findElement(By.xpath("//button[text()='Save']"));
             saveButton.click();
 
-            Thread.sleep(2000); // Use WebDriverWait in real scenarios
 
         } catch (Exception e) {
             takeScreenshot("updateResumeHeadline");
