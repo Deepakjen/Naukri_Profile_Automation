@@ -1,100 +1,92 @@
 package com.naukri.automation;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.Assert;
-import org.testng.annotations.*;
-
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class NaukriProfileUpdateTest {
-    WebDriver driver;
+
+    private WebDriver driver;
+    private WebDriverWait wait;
 
     @BeforeClass
-public void setup() {
-    try {
-        WebDriverManager.chromedriver().setup();
-
+    public void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new");
+
+        // Headless setup with realistic behavior
+        options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--disable-notifications");
-        options.addArguments("--window-size=1920,1080");
-        options.addArguments("--user-data-dir=/tmp/unique-profile-" + System.currentTimeMillis());
+
+        // Fake a user agent (browser fingerprint)
+        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                + "(KHTML, like Gecko) Chrome/114.0.5735.91 Safari/537.36");
+
+        // Prevent detection of headless
+        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
 
         driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
-        driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
+        driver.get("https://www.naukri.com/");
 
-        // Read credentials from environment
-        String email = System.getenv("NAUKRI_EMAIL");
-        String password = System.getenv("NAUKRI_PASSWORD");
+        // Optional: remove navigator.webdriver flag via JS
+        ((JavascriptExecutor) driver).executeScript(
+                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        );
+        
+        //login button
+        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
+        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")
+        	));
+        loginLayer.click();
 
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("NAUKRI_EMAIL is not set.");
-        }
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("NAUKRI_PASSWORD is not set.");
-        }
+        WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
+        emailField.sendKeys("deepakjena903@gmail.com");
 
-        // ... rest of your login code
+        WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@type='password']")));
+        passwordField.sendKeys("Deepak@123");
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        Assert.fail("Setup failed: " + e.getMessage());
-    }
-}
-    @Test(priority = 1)
-    public void verifyProfilePageLoaded() {
-        try {
-            String currentUrl = driver.getCurrentUrl();
-            Assert.assertTrue(currentUrl.contains("profile"), "Profile page did not load correctly.");
-        } catch (Exception e) {
-            takeScreenshot("verifyProfilePageLoaded");
-            Assert.fail("Test failed: " + e.getMessage());
-        }
-    }
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[contains(@class, 'loginButton')]")));
+        loginButton.click();
 
-    @Test(priority = 2)
-    public void updateResumeHeadline() {
-        try {
-            WebElement editButton = driver.findElement(By.xpath("//span[text()='Resume Headline']/following::span[text()='edit']"));
-            editButton.click();
-
-            WebElement textArea = driver.findElement(By.xpath("//textarea"));
-            textArea.clear();
-            textArea.sendKeys("Experienced QA Automation Engineer with expertise in Selenium, TestNG, and CI/CD pipelines.");
-
-            WebElement saveButton = driver.findElement(By.xpath("//button[text()='Save']"));
-            saveButton.click();
-
-
-        } catch (Exception e) {
-            takeScreenshot("updateResumeHeadline");
-            Assert.fail("Failed to update resume headline: " + e.getMessage());
-        }
+        WebElement viewProfile = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[@href='/mnjuser/profile']")));
+        viewProfile.click();
     }
 
-    @Test(priority = 3)
-    public void logout() {
-        try {
-            WebElement myNaukriDropdown = driver.findElement(By.xpath("//div[contains(@class, 'nI-gNb-drawer__user')]"));
-            myNaukriDropdown.click();
+    @Test
+    public void updateResume() {
+        WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@value='Update resume']")));
+        updateResume.click();
 
-            WebElement logoutButton = driver.findElement(By.linkText("Logout"));
-            logoutButton.click();
+        // Get dynamic path
+        String resumePath = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "Deepak_Jena_QA_Resume_2025.pdf";
 
-        } catch (Exception e) {
-            takeScreenshot("logout");
-            Assert.fail("Logout failed: " + e.getMessage());
-        }
+        WebElement fileInput = driver.findElement(By.xpath("//input[@type='file']"));
+        fileInput.sendKeys(resumePath);
     }
 
     @AfterClass
@@ -102,11 +94,5 @@ public void setup() {
         if (driver != null) {
             driver.quit();
         }
-    }
-
-    // Stub for screenshot (implement logic if needed)
-    public void takeScreenshot(String methodName) {
-        // Screenshot logic can be implemented here if needed
-        System.out.println("Screenshot taken for method: " + methodName);
     }
 }
