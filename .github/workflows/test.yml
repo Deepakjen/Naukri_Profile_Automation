@@ -23,7 +23,7 @@ jobs:
         java-version: '17'
 
     - name: Set up Chrome for Selenium
-      uses: browser-actions/setup-chrome@v4
+      uses: browser-actions/setup-chrome@v1
 
     - name: Build with Maven
       run: mvn clean install
