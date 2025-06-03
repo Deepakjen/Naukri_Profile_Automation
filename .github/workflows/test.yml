@@ -1,4 +1,4 @@
-nname: Run Naukri Resume Test Daily
+name: Run Naukri Resume Test Daily
 
 on:
   schedule:
