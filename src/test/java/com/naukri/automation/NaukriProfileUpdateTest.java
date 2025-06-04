@@ -65,9 +65,19 @@ public class NaukriProfileUpdateTest {
                 By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
-        WebElement viewProfile = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[@href='/mnjuser/profile']")));
-        viewProfile.click();
+        // Wait and click the 3-bar menu
+        WebElement hamburgerMenu = wait.until(ExpectedConditions.elementToBeClickable(
+            By.cssSelector("div.nI-gNb-drawer__bars")));
+        hamburgerMenu.click();
+        
+        // Step 2: Wait for drawer to be visible
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("div.naukri-drawer.right.open")));
+
+        // Step 3: Click on "View & Update Profile"
+        WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[contains(text(), 'View & Update Profile')]")));
+        updateProfileLink.click();
     }
 
     @Test
