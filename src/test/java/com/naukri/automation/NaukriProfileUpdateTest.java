@@ -25,7 +25,7 @@ public class NaukriProfileUpdateTest {
     private WebDriverWait wait;
 
     @BeforeClass
-    public void setup() {
+    public void setup() throws InterruptedException {
         ChromeOptions options = new ChromeOptions();
 
         // Headless setup with realistic behavior
