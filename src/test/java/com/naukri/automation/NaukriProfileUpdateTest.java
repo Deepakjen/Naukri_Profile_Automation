@@ -1,4 +1,4 @@
-package com.otobit.texBit.Requisition;
+package com.naukri.automation;
 
 import java.io.File;
 import java.time.Duration;
@@ -16,7 +16,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class NPA {
+public class NaukriProfileUpdateTest {
 	
 	private WebDriver driver;
     private WebDriverWait wait;
