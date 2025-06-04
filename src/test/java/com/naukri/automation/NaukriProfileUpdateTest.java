@@ -24,7 +24,7 @@ public class NPA {
     @BeforeClass
     public void setup() throws InterruptedException {
         ChromeOptions options = new ChromeOptions();
-        /*
+        
         // Headless setup with realistic behavior
         options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
         options.addArguments("--disable-gpu");
@@ -39,7 +39,7 @@ public class NPA {
         // Prevent detection of headless
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
-		*/
+
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
