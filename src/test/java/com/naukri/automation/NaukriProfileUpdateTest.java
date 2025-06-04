@@ -46,19 +46,13 @@ public class NaukriProfileUpdateTest {
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
-        driver.get("https://www.naukri.com/");
+        driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
 
         // Optional: remove navigator.webdriver flag via JS
         ((JavascriptExecutor) driver).executeScript(
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         );
         
-        //login button
-        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
-        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")
-        	));
-        loginLayer.click();
-
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
         emailField.sendKeys("deepakjena903@gmail.com");
@@ -68,7 +62,7 @@ public class NaukriProfileUpdateTest {
         passwordField.sendKeys("Deepak@123");
 
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(@class, 'loginButton')]")));
+                By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
         WebElement viewProfile = wait.until(ExpectedConditions.elementToBeClickable(
