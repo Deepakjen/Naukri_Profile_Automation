@@ -48,7 +48,7 @@ jobs:
 
     - name: Upload screenshots if test fails
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: failure-screenshots
         path: screenshots/
