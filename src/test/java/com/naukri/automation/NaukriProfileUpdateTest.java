@@ -66,7 +66,7 @@ public class NaukriProfileUpdateTest {
         Thread.sleep(10);
         // Wait and click the 3-bar menu
         WebElement hamburgerMenu = wait.until(ExpectedConditions.elementToBeClickable(
-            By.cssSelector("div.nI-gNb-drawer__bars")));
+            By.xpath("//div[@class='nI-gNb-drawer__bars']")));
         hamburgerMenu.click();
         
         // Step 2: Wait for drawer to be visible
