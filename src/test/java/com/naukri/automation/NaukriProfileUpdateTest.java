@@ -1,14 +1,11 @@
-package com.naukri.automation;
+package com.otobit.texBit.Requisition;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
 
-import org.apache.commons.io.FileUtils;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,15 +16,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class NaukriProfileUpdateTest {
-
-    private WebDriver driver;
+public class NPA {
+	
+	private WebDriver driver;
     private WebDriverWait wait;
 
     @BeforeClass
     public void setup() throws InterruptedException {
         ChromeOptions options = new ChromeOptions();
-
+        
         // Headless setup with realistic behavior
         options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
         options.addArguments("--disable-gpu");
@@ -42,7 +39,7 @@ public class NaukriProfileUpdateTest {
         // Prevent detection of headless
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
-
+		
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
@@ -53,11 +50,6 @@ public class NaukriProfileUpdateTest {
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         );
         
-        //login button
-        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
-        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")
-        	));
-        loginLayer.click();
 
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
@@ -87,6 +79,7 @@ public class NaukriProfileUpdateTest {
         updateProfileLink.click();
     }
 
+    
     @Test
     public void updateResume() {
         WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
@@ -99,11 +92,14 @@ public class NaukriProfileUpdateTest {
         WebElement fileInput = driver.findElement(By.xpath("//input[@type='file']"));
         fileInput.sendKeys(resumePath);
     }
-
+    
+	
     @AfterClass
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
     }
+	
+
 }
