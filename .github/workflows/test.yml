@@ -2,7 +2,7 @@ name: Run Naukri Resume Test Daily
 
 on:
   schedule:
-    - cron: '55 3 * * *'  # Runs daily at 9:25 AM IST (03:55 AM UTC)
+    - cron: '55 3 * * *' # Runs daily at 9:25 AM IST (3:55 AM UTC)
   workflow_dispatch:
   push:
     branches:
@@ -16,39 +16,30 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Java
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Download Chrome
+    - name: Set up Chrome for Selenium
       uses: browser-actions/setup-chrome@v1
 
-    - name: Set up ChromeDriver
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Run tests
       run: |
-        sudo apt-get update
-        sudo apt-get install -y unzip xvfb libxi6 libnss3-dev libxss1 libatk-bridge2.0-0 libgtk-3-0 libasound2
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-        CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json" | jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform=="linux64") | .url')
-        curl -Lo chromedriver.zip "$CHROMEDRIVER_VERSION"
-        unzip chromedriver.zip
-        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
-        chmod +x /usr/local/bin/chromedriver
+        echo "Running Naukri Resume Update Automation..."
+        mvn test
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-maven
-
-    - name: Run tests with Maven
-      run: mvn clean test
-
-    - name: Upload screenshots if test fails
+    - name: Create dummy test-output folder if missing
       if: failure()
+      run: mkdir -p test-output
+
+    - name: Archive test results
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: failure-screenshots
-        path: screenshots/
+        name: test-results
+        path: test-output/
