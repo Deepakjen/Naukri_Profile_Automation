@@ -1,11 +1,14 @@
-package com.otobit.texBit.Requisition;
+package com.naukri.automation;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
-
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,15 +19,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class NPA {
-	
-	private WebDriver driver;
+public class NaukriProfileUpdateTest {
+
+    private WebDriver driver;
     private WebDriverWait wait;
 
     @BeforeClass
-    public void setup() throws InterruptedException {
+    public void setup() {
         ChromeOptions options = new ChromeOptions();
-        
+
         // Headless setup with realistic behavior
         options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
         options.addArguments("--disable-gpu");
@@ -50,6 +53,11 @@ public class NPA {
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         );
         
+        //login button
+        WebElement loginLayer = wait.until(ExpectedConditions.elementToBeClickable(
+        	    By.xpath("//a[@id='login_Layer' and contains(@class, 'nI-gNb-lg-rg__login')]")
+        	));
+        loginLayer.click();
 
         WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
@@ -63,7 +71,7 @@ public class NPA {
                 By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
-        Thread.sleep(5000);
+        Thread.sleep(10);
         // Wait and click the 3-bar menu
         WebElement hamburgerMenu = wait.until(ExpectedConditions.elementToBeClickable(
             By.cssSelector("div.nI-gNb-drawer__bars")));
@@ -79,7 +87,6 @@ public class NPA {
         updateProfileLink.click();
     }
 
-    
     @Test
     public void updateResume() {
         WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
@@ -92,15 +99,11 @@ public class NPA {
         WebElement fileInput = driver.findElement(By.xpath("//input[@type='file']"));
         fileInput.sendKeys(resumePath);
     }
-    
-	
+
     @AfterClass
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
     }
-	
-	
-
 }
