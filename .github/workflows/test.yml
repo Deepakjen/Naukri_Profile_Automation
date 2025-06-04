@@ -1,50 +1,54 @@
-name: Naukri Profile Update Automation
+name: Run Naukri Resume Test Daily
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 10 * * *' # Runs daily at 10:00 AM IST (4:30 AM UTC)
+    - cron: '55 3 * * *'  # Runs daily at 9:25 AM IST (03:55 AM UTC)
+  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
-  run-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Download Chrome
-        uses: browser-actions/setup-chrome@v1
+    - name: Download Chrome
+      uses: browser-actions/setup-chrome@v1
 
-      - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: 'latest'
+    - name: Set up ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4 libnss3-dev libxss1 libappindicator1 libindicator7
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json" | jq -r --arg VERSION "$CHROME_VERSION" '.channels.Stable.downloads.chromedriver[] | select(.platform=="linux64") | .url')
+        curl -Lo chromedriver.zip "$CHROMEDRIVER_VERSION"
+        unzip chromedriver.zip
+        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
+        chmod +x /usr/local/bin/chromedriver
 
-      - name: Add execute permissions to Chrome
-        run: |
-          sudo chmod +x $(which google-chrome)
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven
 
-      - name: Verify Chrome and Chromedriver versions
-        run: |
-          google-chrome --version
-          chromedriver --version
+    - name: Run tests with Maven
+      run: mvn clean test
 
-      - name: Build with Maven
-        run: mvn clean compile
-
-      - name: Run Selenium Test
-        run: mvn test
-
-      - name: Archive screenshots on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: failure-screenshots
-          path: '*.png'
+    - name: Upload screenshots if test fails
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: failure-screenshots
+        path: screenshots/
