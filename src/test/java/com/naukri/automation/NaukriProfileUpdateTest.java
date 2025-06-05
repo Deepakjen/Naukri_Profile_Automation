@@ -41,7 +41,7 @@ public class NaukriProfileUpdateTest {
         options.setExperimentalOption("useAutomationExtension", false);
 		
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         driver.manage().window().maximize();
         driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
 
@@ -63,18 +63,16 @@ public class NaukriProfileUpdateTest {
                 By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
-        WebElement menuIcon = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.cssSelector("div.nI-gNb-drawer__icon")));
-        menuIcon.click();
-        
-        // Step 2: Wait for drawer to be visible
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("div.naukri-drawer.right.open")));
+        // Step 1: Wait for header to load (ensure page is ready)
+	wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.nI-gNb-header")));
 
-        // Step 3: Click on "View & Update Profile"
-        WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(text(), 'View & Update Profile')]")));
-        updateProfileLink.click();
+	// Optional: wait longer if animation or lazy load
+	Thread.sleep(2000); // Not ideal but sometimes necessary for flaky UIs
+
+	// Step 2: Wait for and click on the 3-bar menu icon
+	WebElement menuIcon = wait.until(ExpectedConditions.elementToBeClickable(
+        By.xpath("//div[contains(@class, 'nI-gNb-drawer__icon')]")));
+	menuIcon.click();
     }
 
     
