@@ -45,7 +45,7 @@ public class NaukriProfileUpdateTest {
         	driver = new ChromeDriver(options);
         	wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         	driver.manage().window().maximize();
-        	driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
+        	driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/profile");
 
         	// Optional: remove navigator.webdriver flag via JS
         	((JavascriptExecutor) driver).executeScript(
@@ -63,14 +63,6 @@ public class NaukriProfileUpdateTest {
                 	By.xpath("//button[@type='submit' and text()='Login']")));
         	loginButton.click();
 
-        	// ✅ Wait until a known element on the homepage appears
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.view-profile-wrapper")));
-
-		System.out.println("✅ Logged in and homepage loaded");
-
-		// ✅ Now safely navigate to the profile page
-		driver.get("https://www.naukri.com/mnjuser/profile");
-
         
 	}
 	@Test
@@ -78,8 +70,6 @@ public class NaukriProfileUpdateTest {
 		WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
 			By.xpath("//input[@value='Update resume']")));
 		updateResume.click();
-
-		System.out.println("✅ Navigated to Profile page successfully!");
 
 		String resumePath = System.getProperty("user.dir") + File.separator +
 			"resources" + File.separator + "Deepak_Jena_QA_Resume_2025.pdf";
