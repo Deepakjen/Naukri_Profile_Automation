@@ -63,16 +63,26 @@ public class NaukriProfileUpdateTest {
                 By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
-        // Step 1: Wait for header to load (ensure page is ready)
-	wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.nI-gNb-header")));
+        // Wait for the header or a known loaded element
+	wait.until(ExpectedConditions.visibilityOfElementLocated(
+    	By.cssSelector("div.nI-gNb-header")));
 
-	// Optional: wait longer if animation or lazy load
-	Thread.sleep(2000); // Not ideal but sometimes necessary for flaky UIs
+	// Optional pause for animations
+	Thread.sleep(2000);
 
-	// Step 2: Wait for and click on the 3-bar menu icon
-	WebElement menuIcon = wait.until(ExpectedConditions.elementToBeClickable(
-        By.xpath("//div[contains(@class, 'nI-gNb-drawer__icon')]")));
-	menuIcon.click();
+	// Then try clicking the correct menu element
+	WebElement menu = wait.until(ExpectedConditions.elementToBeClickable(
+   	 By.cssSelector("div.nI-gNb-drawer__bars")));
+	menu.click();
+
+	// Step 2: Wait for drawer to be visible
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("div.naukri-drawer.right.open")));
+
+        // Step 3: Click on "View & Update Profile"
+        WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[contains(text(), 'View & Update Profile')]")));
+        updateProfileLink.click();
     }
 
     
