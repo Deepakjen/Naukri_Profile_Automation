@@ -63,19 +63,9 @@ public class NaukriProfileUpdateTest {
                 	By.xpath("//button[@type='submit' and text()='Login']")));
         	loginButton.click();
 
-        	// Wait for profile dropdown to appear
-		WebElement profileMenu = wait.until(ExpectedConditions.visibilityOfElementLocated(
-   		 By.cssSelector("div.nI-gNb-header__dropdown")));
-
-		Actions actions = new Actions(driver);
-		actions.moveToElement(profileMenu).perform();
-
-		// Small pause to allow dropdown to render (headless is fast!)
-		Thread.sleep(3000);
-
-		// Now wait for the "View Profile" button to be clickable
+        	// Directly wait for the "View Profile" button and click it
 		WebElement viewProfile = wait.until(ExpectedConditions.elementToBeClickable(
-    		By.cssSelector("div.view-profile-wrapper a[href*='/mnjuser/profile']")));
+   			By.xpath("//a[contains(@href, '/mnjuser/profile') and contains(text(), 'View Profile')]")));
 		viewProfile.click();
         
 	}
