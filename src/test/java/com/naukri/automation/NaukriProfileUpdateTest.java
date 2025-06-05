@@ -28,7 +28,7 @@ public class NaukriProfileUpdateTest {
         // Headless setup with realistic behavior
         options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
         options.addArguments("--disable-gpu");
-        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--window-size=375,812");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
 
