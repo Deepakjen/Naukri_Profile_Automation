@@ -66,27 +66,31 @@ public class NaukriProfileUpdateTest {
         
 	}
 	@Test
-	public void updateResume() {
-		    // Scroll down to make "Update resume" button visible
-		    ((JavascriptExecutor) driver).executeScript("window.scrollBy(0, 500);");
+	public void ResumeHeadline() {
+		    JavascriptExecutor js = (JavascriptExecutor) driver;
 
-		    // Wait for the button to be clickable
-		    WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
-		        By.xpath("//input[@value='Update resume']")));
-		    updateResume.click();
+		    // Scroll to the "Resume headline" section
+		    WebElement headlineSection = wait.until(ExpectedConditions.presenceOfElementLocated(
+		        By.xpath("//*[@id=\"lazyResumeHead\"]/div/div/div[1]/span[2]")));
+		    js.executeScript("arguments[0].scrollIntoView(true);", headlineSection);
 
-		    System.out.println("✅ Clicked on 'Update resume'");
+		    // Click the pencil icon
+		    WebElement editIcon = wait.until(ExpectedConditions.elementToBeClickable(
+		        By.xpath("//span[contains(@class,'edit icon')]")));
+		    editIcon.click();
 
-		    // Build full resume path
-		    String resumePath = System.getProperty("user.dir") + File.separator +
-		        "resources" + File.separator + "Deepak_Jena_QA_Resume_2025.pdf";
+		    // Wait for the textarea to appear
+		    WebElement textArea = wait.until(ExpectedConditions.visibilityOfElementLocated(
+		        By.id("resumeHeadlineTxt")));
 
-		    // Wait for the file input field and upload resume
-		    WebElement fileInput = wait.until(ExpectedConditions.presenceOfElementLocated(
-		        By.xpath("//input[@type='file']")));
-		    fileInput.sendKeys(resumePath);
+		    // Clear and type new headline
+		    textArea.clear();
+		    textArea.sendKeys("QA Analyst | Manual & Automation Testing | HTML | Selenium | GitHub | CSS");
 
-		    System.out.println("✅ Resume uploaded successfully!");
+		    // Click the Save button
+		    WebElement saveBtn = wait.until(ExpectedConditions.elementToBeClickable(
+		        By.xpath("//button[text()='Save']")));
+		    saveBtn.click();
 	}
 
 	@AfterClass
