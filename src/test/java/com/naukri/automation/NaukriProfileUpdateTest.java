@@ -25,70 +25,59 @@ public class NaukriProfileUpdateTest {
 	@BeforeClass
 	public void setup() throws InterruptedException {
 		ChromeOptions options = new ChromeOptions();
+        
+        // Headless setup with realistic behavior
+        options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
-		// ✅ Mobile Emulation config (iPhone)
-		Map<String, Object> deviceMetrics = new HashMap<>();
-		deviceMetrics.put("width", 375);
-		deviceMetrics.put("height", 812);
-		deviceMetrics.put("pixelRatio", 3.0);
+        // Fake a user agent (browser fingerprint)
+        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                + "(KHTML, like Gecko) Chrome/114.0.5735.91 Safari/537.36");
 
-		Map<String, Object> mobileEmulation = new HashMap<>();
-		mobileEmulation.put("deviceMetrics", deviceMetrics);
-		mobileEmulation.put("userAgent", 
-			"Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 "
-			+ "(KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1");
+        // Prevent detection of headless
+        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
+	
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
 
-		options.setExperimentalOption("mobileEmulation", mobileEmulation);
+        // Optional: remove navigator.webdriver flag via JS
+        ((JavascriptExecutor) driver).executeScript(
+                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        );
+        
 
-		// ✅ Headless + anti-detection
-		options.addArguments("--headless=new");
-		options.addArguments("--disable-gpu");
-		options.addArguments("--no-sandbox");
-		options.addArguments("--disable-dev-shm-usage");
-		options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-		options.setExperimentalOption("useAutomationExtension", false);
+        WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
+        emailField.sendKeys("deepakjena903@gmail.com");
 
-		driver = new ChromeDriver(options);
-		wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@type='password']")));
+        passwordField.sendKeys("Deepak@123");
 
-		driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[@type='submit' and text()='Login']")));
+        loginButton.click();
 
-		// Hide navigator.webdriver
-		((JavascriptExecutor) driver).executeScript(
-			"Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-		);
+        Thread.sleep(10);
+        // Wait and click the 3-bar menu
+        WebElement hamburgerMenu = wait.until(ExpectedConditions.elementToBeClickable(
+            By.cssSelector("div.nI-gNb-drawer__bars")));
+        hamburgerMenu.click();
+        
+        // Step 2: Wait for drawer to be visible
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("div.naukri-drawer.right.open")));
 
-		// Login flow
-		WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
-			By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
-		emailField.sendKeys("deepakjena903@gmail.com");
-
-		WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
-			By.xpath("//input[@type='password']")));
-		passwordField.sendKeys("Deepak@123");
-
-		WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
-			By.xpath("//button[@type='submit' and text()='Login']")));
-		loginButton.click();
-
-		// ✅ Wait for mobile menu to be clickable
-		wait.until(ExpectedConditions.presenceOfElementLocated(
-			By.cssSelector("div.nI-gNb-drawer__bars")));
-
-		Thread.sleep(2000); // Let layout settle
-
-		WebElement menu = wait.until(ExpectedConditions.elementToBeClickable(
-			By.cssSelector("div.nI-gNb-drawer__bars")));
-		menu.click();
-
-		// Wait for drawer
-		wait.until(ExpectedConditions.visibilityOfElementLocated(
-			By.cssSelector("div.naukri-drawer.right.open")));
-
-		// Click "View & Update Profile"
-		WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
-			By.xpath("//a[contains(text(), 'View & Update Profile')]")));
-		updateProfileLink.click();
+        // Step 3: Click on "View & Update Profile"
+        WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[contains(text(), 'View & Update Profile')]")));
+        updateProfileLink.click();
 	}
 
 	@Test
