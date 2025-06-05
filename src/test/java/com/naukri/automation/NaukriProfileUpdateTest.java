@@ -63,15 +63,9 @@ public class NaukriProfileUpdateTest {
                 By.xpath("//button[@type='submit' and text()='Login']")));
         loginButton.click();
 
-        // Ensure page is fully loaded
-	wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-  	  .executeScript("return document.readyState").equals("complete"));
-
-	// Locate using JS click to avoid overlays or intercept issues
-	WebElement menuBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
-  	  By.xpath("//div[contains(@class, 'nl-gNb-bar2')]")));
-
-	((JavascriptExecutor) driver).executeScript("arguments[0].click();", menuBtn);
+        WebElement menuIcon = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.cssSelector("div.nI-gNb-drawer__icon")));
+        menuIcon.click();
         
         // Step 2: Wait for drawer to be visible
         wait.until(ExpectedConditions.visibilityOfElementLocated(
