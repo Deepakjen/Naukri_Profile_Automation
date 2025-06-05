@@ -67,15 +67,26 @@ public class NaukriProfileUpdateTest {
 	}
 	@Test
 	public void updateResume() {
-		WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
-			By.xpath("//input[@value='Update resume']")));
-		updateResume.click();
+		    // Scroll down to make "Update resume" button visible
+		    ((JavascriptExecutor) driver).executeScript("window.scrollBy(0, 500);");
 
-		String resumePath = System.getProperty("user.dir") + File.separator +
-			"resources" + File.separator + "Deepak_Jena_QA_Resume_2025.pdf";
+		    // Wait for the button to be clickable
+		    WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
+		        By.xpath("//input[@value='Update resume']")));
+		    updateResume.click();
 
-		WebElement fileInput = driver.findElement(By.xpath("//input[@type='file']"));
-		fileInput.sendKeys(resumePath);
+		    System.out.println("✅ Clicked on 'Update resume'");
+
+		    // Build full resume path
+		    String resumePath = System.getProperty("user.dir") + File.separator +
+		        "resources" + File.separator + "Deepak_Jena_QA_Resume_2025.pdf";
+
+		    // Wait for the file input field and upload resume
+		    WebElement fileInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+		        By.xpath("//input[@type='file']")));
+		    fileInput.sendKeys(resumePath);
+
+		    System.out.println("✅ Resume uploaded successfully!");
 	}
 
 	@AfterClass
