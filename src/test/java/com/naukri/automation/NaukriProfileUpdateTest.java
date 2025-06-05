@@ -26,60 +26,50 @@ public class NaukriProfileUpdateTest {
 	public void setup() throws InterruptedException {
 		ChromeOptions options = new ChromeOptions();
         
-        // Headless setup with realistic behavior
-        options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
-        options.addArguments("--disable-gpu");
-        options.addArguments("--window-size=1920,1080");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+       		// Headless setup with realistic behavior
+        	options.addArguments("--headless=new"); // Use 'new' to avoid old headless issues
+        	options.addArguments("--disable-gpu");
+        	options.addArguments("--window-size=1920,1080");
+        	options.addArguments("--no-sandbox");
+        	options.addArguments("--disable-dev-shm-usage");
 
-        // Fake a user agent (browser fingerprint)
-        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        	// Fake a user agent (browser fingerprint)
+        	options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                 + "(KHTML, like Gecko) Chrome/114.0.5735.91 Safari/537.36");
 
-        // Prevent detection of headless
-        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        options.setExperimentalOption("useAutomationExtension", false);
+        	// Prevent detection of headless
+        	options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        	options.setExperimentalOption("useAutomationExtension", false);
 	
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
+        	driver = new ChromeDriver(options);
+        	wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        	driver.manage().window().maximize();
+        	driver.get("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage");
 
-        // Optional: remove navigator.webdriver flag via JS
-        ((JavascriptExecutor) driver).executeScript(
-                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        );
+        	// Optional: remove navigator.webdriver flag via JS
+        	((JavascriptExecutor) driver).executeScript(
+                	"Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
         
+        	WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
+                	By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
+        	emailField.sendKeys("deepakjena903@gmail.com");
 
-        WebElement emailField = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//input[@type='text' and contains(@placeholder, 'Email ID')]")));
-        emailField.sendKeys("deepakjena903@gmail.com");
+        	WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
+               		By.xpath("//input[@type='password']")));
+        	passwordField.sendKeys("Deepak@123");
 
-        WebElement passwordField = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//input[@type='password']")));
-        passwordField.sendKeys("Deepak@123");
+        	WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
+                	By.xpath("//button[@type='submit' and text()='Login']")));
+        	loginButton.click();
 
-        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[@type='submit' and text()='Login']")));
-        loginButton.click();
+        	// Wait for "View profile" to appear
+        	WebElement viewProfileBtn = wait.until(ExpectedConditions.elementToBeClickable(
+            		By.cssSelector("div.view-profile-wrapper a[href*='/mnjuser/profile']")));
+		viewProfileBtn.click();
 
-        Thread.sleep(10);
-        // Wait and click the 3-bar menu
-        WebElement hamburgerMenu = wait.until(ExpectedConditions.elementToBeClickable(
-            By.cssSelector("div.nI-gNb-drawer__bars")));
-        hamburgerMenu.click();
+        	System.out.println("✅ View Profile button clicked successfully!");
         
-        // Step 2: Wait for drawer to be visible
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("div.naukri-drawer.right.open")));
-
-        // Step 3: Click on "View & Update Profile"
-        WebElement updateProfileLink = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(text(), 'View & Update Profile')]")));
-        updateProfileLink.click();
 	}
-
 	@Test
 	public void updateResume() {
 		WebElement updateResume = wait.until(ExpectedConditions.elementToBeClickable(
