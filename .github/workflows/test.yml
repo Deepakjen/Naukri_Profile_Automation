@@ -28,9 +28,11 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Run tests
+    - name: Run tests with secrets
       run: |
         echo "Running Naukri Resume Update Automation..."
+        NAUKRI_EMAIL=${{ secrets.NAUKRI_EMAIL }} 
+        NAUKRI_PASSWORD=${{ secrets.NAUKRI_PASSWORD }} 
         mvn test
 
     - name: Create dummy test-output folder if missing
